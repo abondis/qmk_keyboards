@@ -4,22 +4,33 @@
 
 #include "../chibios_common/config.h"
 
-#define MATRIX_ROW_PINS {
-  {GPIOA, 0},{GPIOA, 1},
-  {GPIOA, 2},{GPIOA, 3},
-  {GPIOA, 4},{GPIOA, 5},
-  {GPIOA, 6},{GPIOA, 7},
-  {GPIOA, 8},{GPIOA, 9},
-  {GPIOA, 10},
-}
-#define MATRIX_COL_PINS {
-  {GPIOB, 12},
-  {GPIOB, 13},
-  {GPIOB, 14},
-  {GPIOB, 15},
-}
+#undef MATRIX_ROWS
+#undef MATRIX_COLS
 #define MATRIX_ROWS 4
 #define MATRIX_COLS 11
+
+#define PORTS {                                 \
+    GPIOA,                                      \
+    GPIOB                                       \
+  }
+#define PORTA 0
+#define PORTB 1
+
+#define MATRIX_ROW_PINS                         {                                             \
+    {PORTA, 0},{PORTA, 1},                      \
+    {PORTA, 2},{PORTA, 3},                      \
+    {PORTA, 4},{PORTA, 5},                      \
+    {PORTA, 6},{PORTA, 7},                      \
+    {PORTA, 8},{PORTA, 9},                      \
+    {PORTA, 10}                                 \
+  }
+
+#define MATRIX_COL_PINS                         {                                             \
+    {PORTB, 12},                                \
+    {PORTB, 13},                                \
+    {PORTB, 14},                                \
+    {PORTB, 15}                                 \
+  }
 
 #define DIODE_DIRECTION COL2ROW
 #endif /* KEYBOARDS_STM32_F103_ATREUS_CONFIG_H_ */

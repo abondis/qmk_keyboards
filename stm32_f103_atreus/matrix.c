@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*
  * scan matrix
  */
+#include "config.h"
 #include "print.h"
 #include "debug.h"
 #include "util.h"
@@ -28,12 +29,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wait.h"
 static const uint8_t col_pins[][2] = MATRIX_COL_PINS;
 static const uint8_t row_pins[][2] = MATRIX_ROW_PINS;
+static matrix_row_t matrix[MATRIX_ROWS];
+static matrix_row_t matrix_debouncing[MATRIX_ROWS];
+static GPIO_TypeDef * _PORTS[] = PORTS; 
 
 // static matrix_row_t read_cols(void);
-static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row);
 static void init_cols(void);
+static void init_rows(void);
 static void unselect_rows(void);
 static void select_row(uint8_t row);
+static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row);
 
 
 /* generic STM32F103C8T6 board */
@@ -50,21 +55,87 @@ static void select_row(uint8_t row);
 #define LED_TGL()   do { palTogglePad(GPIOB, 1); } while (0)
 #endif
 
+void matrix_init(void) {
+
+
+  unselect_rows();
+  init_rows();
+  init_cols();
+
+  for (uint8_t i=0; i < MATRIX_ROWS; i++) {
+    matrix[i] = 0;
+    matrix_debouncing[i] = 0;
+  }
+
+  matrix_init_quantum();
+}
+
+uint8_t matrix_scan(void)
+{
+    // Set row, read cols
+    for (uint8_t current_row = 0; current_row < MATRIX_ROWS; current_row++) {
+#       if (DEBOUNCING_DELAY > 0)
+            bool matrix_changed = read_cols_on_row(matrix_debouncing, current_row);
+
+            if (matrix_changed) {
+                debouncing = true;
+                debouncing_time = timer_read();
+            }
+
+#       else
+            read_cols_on_row(matrix, current_row);
+#       endif
+
+    }
+
+
+
+#   if (DEBOUNCING_DELAY > 0)
+        if (debouncing && (timer_elapsed(debouncing_time) > DEBOUNCING_DELAY)) {
+            for (uint8_t i = 0; i < MATRIX_ROWS; i++) {
+                matrix[i] = matrix_debouncing[i];
+            }
+            debouncing = false;
+        }
+#   endif
+
+    matrix_scan_quantum();
+    return 1;
+}
 
 /* Column pin configuration
  */
 static void  init_cols(void)
 {
   for(uint8_t x = 0; x < MATRIX_COLS; x++) {
-    palSetPadMode(PORTS[row_pins[x][0]], row_pins[x][1], PAL_MODE_INPUT_PULLUP);
+    palSetPadMode(_PORTS[row_pins[x][0]], row_pins[x][1], PAL_MODE_INPUT_PULLUP);
   }
 }
 
 static void  init_rows(void)
 {
   for(uint8_t x = 0; x < MATRIX_ROWS; x++) {
-    palSetPadMode(PORTS[row_pins[x][0]], row_pins[x][1], PAL_MODE_OUTPUT_PUSHPULL);
+    palSetPadMode(_PORTS[row_pins[x][0]], row_pins[x][1], PAL_MODE_OUTPUT_PUSHPULL);
   }
+}
+/* Row pin configuration
+ */
+static void unselect_row(uint8_t row)
+{
+  palSetPad(_PORTS[row_pins[row][0]], row_pins[row][1]);
+}
+
+static void unselect_rows(void)
+{
+  for(uint8_t x = 0; x < MATRIX_ROWS; x++) {
+    unselect_row(x);
+  }
+}
+
+static void select_row(uint8_t row)
+{
+  // Output low to select
+  palClearPad(_PORTS[row_pins[row][0]], row_pins[row][1]);
 }
 
 /* Returns status of switches(1:on, 0:off) */
@@ -85,10 +156,10 @@ static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row)
   for(uint8_t col_index = 0; col_index < MATRIX_COLS; col_index++) {
 
     // Select the col pin to read (active low)
-    uint8_t pin_state = palReadPad(PORT[col_pins[col_index][0]], col_pins[col_index][1])==PAL_HIGH;
+    uint8_t pin_state = palReadPad(_PORTS[col_pins[col_index][0]], col_pins[col_index][1])==PAL_HIGH;
 
     // Populate the matrix row with the state of the col pin
-    current_matrix[current_row] |=  pin_state ? 0 : (ROW_SHIFTER << col_index);
+    current_matrix[current_row] |=  pin_state ? 0 : (1 << col_index);
   }
 
   // Unselect row
@@ -97,22 +168,3 @@ static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row)
   return (last_row_value != current_matrix[current_row]);
 }
 
-/* Row pin configuration
- */
-static void unselect_row(uint8_t row)
-{
-  palSetPad(PORTS[row_pins[row][0]], row_pins[row][1]);
-}
-
-static void unselect_rows(void)
-{
-  for(uint8_t x = 0; x < MATRIX_ROW_PINS; x++) {
-    unselect_row(x);
-  }
-}
-
-static void select_row(uint8_t row)
-{
-  // Output low to select
-  palClearPad(PORTS[row_pins[row][0]], row_pins[row][1]);
-}

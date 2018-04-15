@@ -6,13 +6,10 @@
 
 #undef MATRIX_ROWS
 #undef MATRIX_COLS
-#define MATRIX_ROWS 4
-#define MATRIX_COLS 11
+#define MATRIX_ROWS 11
+#define MATRIX_COLS 4
 
-#define PORTS {                                 \
-    GPIOA,                                      \
-    GPIOB                                       \
-  }
+#define PORTS {(GPIO_TypeDef *)GPIOA, (GPIO_TypeDef *)GPIOB}
 #define PORTA 0
 #define PORTB 1
 

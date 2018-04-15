@@ -12,3 +12,5 @@
 ** Build
    - =make stm32_f103_atreus:abondis=
    
+* TODOs
+** TODO Move MCU related files to a common folder

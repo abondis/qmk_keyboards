@@ -26,33 +26,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "util.h"
 #include "matrix.h"
 #include "wait.h"
+// static const uint8_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
+static const uint8_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
+static const uint8_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
 
-#ifndef DEBOUNCE
-#   define DEBOUNCE 5
-#endif
-static uint8_t debouncing = DEBOUNCE;
-
-/* matrix state(1:on, 0:off) */
-static matrix_row_t matrix[MATRIX_ROWS];
-static matrix_row_t matrix_debouncing[MATRIX_ROWS];
-
-static matrix_row_t read_cols(void);
+// static matrix_row_t read_cols(void);
+static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row);
 static void init_cols(void);
 static void unselect_rows(void);
 static void select_row(uint8_t row);
 
-
-inline
-uint8_t matrix_rows(void)
-{
-    return MATRIX_ROWS;
-}
-
-inline
-uint8_t matrix_cols(void)
-{
-    return MATRIX_COLS;
-}
 
 /* generic STM32F103C8T6 board */
 #ifdef BOARD_GENERIC_STM32_F103
@@ -68,134 +51,72 @@ uint8_t matrix_cols(void)
 #define LED_TGL()   do { palTogglePad(GPIOB, 1); } while (0)
 #endif
 
-void matrix_init(void)
-{
-    // initialize row and col
-    unselect_rows();
-    init_cols();
 
-    // initialize matrix state: all keys off
-    for (uint8_t i=0; i < MATRIX_ROWS; i++) {
-        matrix[i] = 0;
-        matrix_debouncing[i] = 0;
-    }
-
-    //debug
-    debug_matrix = true;
-    LED_ON();
-    wait_ms(500);
-    LED_OFF();
-}
-
-uint8_t matrix_scan(void)
-{
-    for (uint8_t i = 0; i < MATRIX_ROWS; i++) {
-        select_row(i);
-        wait_us(30);  // without this wait read unstable value.
-        matrix_row_t cols = read_cols();
-        if (matrix_debouncing[i] != cols) {
-            matrix_debouncing[i] = cols;
-            if (debouncing) {
-                debug("bounce!: "); debug_hex(debouncing); debug("\n");
-            }
-            debouncing = DEBOUNCE;
-        }
-        unselect_rows();
-    }
-
-    if (debouncing) {
-        if (--debouncing) {
-            wait_ms(1);
-        } else {
-            for (uint8_t i = 0; i < MATRIX_ROWS; i++) {
-                matrix[i] = matrix_debouncing[i];
-            }
-        }
-    }
-
-    return 1;
-}
-
-inline
-bool matrix_is_on(uint8_t row, uint8_t col)
-{
-    return (matrix[row] & ((matrix_row_t)1<<col));
-}
-
-inline
-matrix_row_t matrix_get_row(uint8_t row)
-{
-    return matrix[row];
-}
-
-void matrix_print(void)
-{
-    print("\nr/c 0123456789ABCDEF\n");
-    for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
-        phex(row); print(": ");
-        pbin_reverse16(matrix_get_row(row));
-        print("\n");
-    }
-}
-
-/* Column pin configuration
- */
 /* Column pin configuration
  */
 static void  init_cols(void)
 {
-    palSetPadMode(GPIOA, 0, PAL_MODE_INPUT_PULLUP); //Taken by ADC
-    palSetPadMode(GPIOA, 1, PAL_MODE_INPUT_PULLUP); //Taken by ADC
-    palSetPadMode(GPIOA, 2, PAL_MODE_INPUT_PULLUP);
-    palSetPadMode(GPIOA, 3, PAL_MODE_INPUT_PULLUP);
-    palSetPadMode(GPIOA, 4, PAL_MODE_INPUT_PULLUP);
-    palSetPadMode(GPIOA, 5, PAL_MODE_INPUT_PULLUP);
-    palSetPadMode(GPIOA, 6, PAL_MODE_INPUT_PULLUP);
-    palSetPadMode(GPIOA, 7, PAL_MODE_INPUT_PULLUP);
-    palSetPadMode(GPIOA, 8, PAL_MODE_INPUT_PULLUP);
-    palSetPadMode(GPIOA, 9, PAL_MODE_INPUT_PULLUP);
-    palSetPadMode(GPIOA, 10, PAL_MODE_INPUT_PULLUP);
+    for(uint8_t x = 0; x < MATRIX_COL_PINS; x++) {
+      uint8_t pin = row_pins[x];
+      palSetPadMode(pin[0], pin[1], PAL_MODE_INPUT_PULLUP);
+    }
 }
 
 static void  init_rows(void)
 {
-    palSetPadMode(GPIOB, 12, PAL_MODE_OUTPUT_PUSHPULL);
-    palSetPadMode(GPIOB, 13, PAL_MODE_OUTPUT_PUSHPULL);
-    palSetPadMode(GPIOB, 14, PAL_MODE_OUTPUT_PUSHPULL);
-    palSetPadMode(GPIOB, 15, PAL_MODE_OUTPUT_PUSHPULL);
+  for(uint8_t x = 0; x < MATRIX_ROW_PINS; x++) {
+    uint8_t pin = row_pins[x];
+    palSetPadMode(pin[0], pin[1], PAL_MODE_OUTPUT_PUSHPULL);
+  }
 }
 
 /* Returns status of switches(1:on, 0:off) */
-static matrix_row_t read_cols(void)
+/* FIXME: COPY PASTA FROM CORE */
+static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row)
 {
-  return ((palReadPad(GPIOA, 0)==PAL_HIGH) ? 0 : (1<<0))
-    | ((palReadPad(GPIOA, 1)==PAL_HIGH) ? 0 : (1<<1))
-    | ((palReadPad(GPIOA, 2)==PAL_HIGH) ? 0 : (1<<2))
-    | ((palReadPad(GPIOA, 3)==PAL_HIGH) ? 0 : (1<<3))
-    | ((palReadPad(GPIOA, 4)==PAL_HIGH) ? 0 : (1<<4))
-    | ((palReadPad(GPIOA, 5)==PAL_HIGH) ? 0 : (1<<5))
-    | ((palReadPad(GPIOA, 6)==PAL_HIGH) ? 0 : (1<<6))
-    | ((palReadPad(GPIOA, 7)==PAL_HIGH) ? 0 : (1<<7))
-    | ((palReadPad(GPIOA, 8)==PAL_HIGH) ? 0 : (1<<8))
-    | ((palReadPad(GPIOA, 9)==PAL_HIGH) ? 0 : (1<<9))
-    | ((palReadPad(GPIOA, 10)==PAL_HIGH) ? 0 : (1<<10));
+  // Store last value of row prior to reading
+  matrix_row_t last_row_value = current_matrix[current_row];
+
+  // Clear data in matrix row
+  current_matrix[current_row] = 0;
+
+  // Select row and wait for row selecton to stabilize
+  select_row(current_row);
+  wait_us(30);
+
+  // For each col...
+  for(uint8_t col_index = 0; col_index < MATRIX_COLS; col_index++) {
+
+    // Select the col pin to read (active low)
+    uint8_t pin[2] = col_pins[col_index];
+    uint8_t pin_state = palReadPad(pin[0], pin[1])==PAL_HIGH;
+
+    // Populate the matrix row with the state of the col pin
+    current_matrix[current_row] |=  pin_state ? 0 : (ROW_SHIFTER << col_index);
+  }
+
+  // Unselect row
+  unselect_row(current_row);
+
+  return (last_row_value != current_matrix[current_row]);
 }
 
 /* Row pin configuration
  */
+static void unselect_row(uint8_t row)
+{
+  palSetPad(row_pins[row][0], row_pins[row][1]);
+}
+
 static void unselect_rows(void)
 {
-    // palSetPadMode(GPIOA, GPIOA_PIN10, PAL_MODE_INPUT); // hi-Z
-  // unselect high
-  palSetPad(GPIOB, 12);
-  palSetPad(GPIOB, 13);
-  palSetPad(GPIOB, 14);
-  palSetPad(GPIOB, 15);
+  for(uint8_t x = 0; x < MATRIX_ROW_PINS; x++) {
+    unselect_row(x);
+  }
 }
 
 static void select_row(uint8_t row)
 {
-  //(void)row;
-    // Output low to select
-  palClearPad(GPIOB, 12+row);
+  // Output low to select
+  palClearPad(row_pins[row][0], row_pins[row][1]);
 }

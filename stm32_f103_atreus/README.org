@@ -1,0 +1,14 @@
+* Doc
+** Setup
+   - get QMK's submodules
+   - clone
+   - link chibios_common and keyboard folder into QMK's keyboards folder
+     #+BEGIN_SRC shell
+       PATH_TO_CUSTOM_KB="~/custom_kb"
+       cd qmk/keyboards
+       ln -s $PATH_TO_CUSTOM_KB/chibios_common .
+       ln -s $PATH_TO_CUSTOM_KB/stm32_f103_atreus .
+     #+END_SRC
+** Build
+   - =make stm32_f103_atreus:abondis=
+   

@@ -14,3 +14,8 @@
    
 * TODOs
 ** TODO Move MCU related files to a common folder
+** TODO Less copy-paste :
+   - =matrix_init= and =matrix_scan= are just a copy paste from
+     =quantum/matrix.c= since overriding only =read_cols_on_row= (and other
+     related functions) is not possible
+   

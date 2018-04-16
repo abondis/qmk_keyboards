@@ -18,4 +18,8 @@
    - =matrix_init= and =matrix_scan= are just a copy paste from
      =quantum/matrix.c= since overriding only =read_cols_on_row= (and other
      related functions) is not possible
+     #+BEGIN_QUOTE
+     because read_cols_on_row() is not declared with a weak attribute like
+     matrix_scan() so you can’t override it
+     #+END_QUOTE
    

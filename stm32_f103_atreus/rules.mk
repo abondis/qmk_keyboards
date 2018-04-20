@@ -3,9 +3,9 @@ SRC =	matrix.c \
 	led.c
 
 # GENERIC STM32F103C8T6 board - stm32duino bootloader
-OPT_DEFS = -DCORTEX_VTOR_INIT=0x2000
-MCU_LDSCRIPT = STM32F103x8_stm32duino_bootloader
-BOARD = GENERIC_STM32_F103
+# OPT_DEFS = -DCORTEX_VTOR_INIT=0x2000
+# MCU_LDSCRIPT = STM32F103x8_stm32duino_bootloader
+# BOARD = GENERIC_STM32_F103
 
 # GENERIC STM32F103C8T6 board - no bootloader (programmer over serial or SWD)
 # OPT_DEFS =
@@ -13,9 +13,9 @@ BOARD = GENERIC_STM32_F103
 # BOARD = GENERIC_STM32_F103
 
 # MAPLE MINI
-# OPT_DEFS = -DCORTEX_VTOR_INIT=0x5000
-# MCU_LDSCRIPT = STM32F103xB_maplemini_bootloader
-# BOARD = MAPLEMINI_STM32_F103
+OPT_DEFS = -DCORTEX_VTOR_INIT=0x5000
+MCU_LDSCRIPT = STM32F103xB_maplemini_bootloader
+BOARD = MAPLEMINI_STM32_F103
 
 ## chip/board settings
 # the next two should match the directories in

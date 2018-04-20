@@ -128,58 +128,53 @@ void matrix_print(void)
  */
 static void  init_cols(void)
 {
-    palSetPadMode(GPIOA, 0, PAL_MODE_INPUT_PULLUP); //Taken by ADC
-    palSetPadMode(GPIOA, 1, PAL_MODE_INPUT_PULLUP); //Taken by ADC
-    palSetPadMode(GPIOA, 2, PAL_MODE_INPUT_PULLUP);
-    palSetPadMode(GPIOA, 3, PAL_MODE_INPUT_PULLUP);
-    palSetPadMode(GPIOA, 4, PAL_MODE_INPUT_PULLUP);
-    palSetPadMode(GPIOA, 5, PAL_MODE_INPUT_PULLUP);
-    palSetPadMode(GPIOA, 6, PAL_MODE_INPUT_PULLUP);
-    palSetPadMode(GPIOA, 7, PAL_MODE_INPUT_PULLUP);
-    palSetPadMode(GPIOA, 8, PAL_MODE_INPUT_PULLUP);
-    palSetPadMode(GPIOA, 9, PAL_MODE_INPUT_PULLUP);
-    palSetPadMode(GPIOA, 10, PAL_MODE_INPUT_PULLUP);
+  for (uint8_t i = 0; i < MATRIX_COLS; i++) {
+    palSetLineMode(col_pins[i], PAL_MODE_INPUT_PULLUP);
+  }
 }
 
 static void  init_rows(void)
 {
-    palSetPadMode(GPIOB, 12, PAL_MODE_OUTPUT_PUSHPULL);
-    palSetPadMode(GPIOB, 13, PAL_MODE_OUTPUT_PUSHPULL);
-    palSetPadMode(GPIOB, 14, PAL_MODE_OUTPUT_PUSHPULL);
-    palSetPadMode(GPIOB, 15, PAL_MODE_OUTPUT_PUSHPULL);
+  for (uint8_t i = 0; i < MATRIX_ROWS; i++) {
+    palSetLineMode(row_pins[i], PAL_MODE_OUTPUT_PUSHPULL);
+  }
 }
 
 /* Returns status of switches(1:on, 0:off) */
 static matrix_row_t read_cols(void)
 {
-  return ((palReadPad(GPIOA, 0)==PAL_HIGH) ? 0 : (1<<0))
-    | ((palReadPad(GPIOA, 1)==PAL_HIGH) ? 0 : (1<<1))
-    | ((palReadPad(GPIOA, 2)==PAL_HIGH) ? 0 : (1<<2))
-    | ((palReadPad(GPIOA, 3)==PAL_HIGH) ? 0 : (1<<3))
-    | ((palReadPad(GPIOA, 4)==PAL_HIGH) ? 0 : (1<<4))
-    | ((palReadPad(GPIOA, 5)==PAL_HIGH) ? 0 : (1<<5))
-    | ((palReadPad(GPIOA, 6)==PAL_HIGH) ? 0 : (1<<6))
-    | ((palReadPad(GPIOA, 7)==PAL_HIGH) ? 0 : (1<<7))
-    | ((palReadPad(GPIOA, 8)==PAL_HIGH) ? 0 : (1<<8))
-    | ((palReadPad(GPIOA, 9)==PAL_HIGH) ? 0 : (1<<9))
-    | ((palReadPad(GPIOA, 10)==PAL_HIGH) ? 0 : (1<<10));
+  matrix_row_t col = 0;
+  for (uint8_t i = 0; i < MATRIX_COLS; i++) {
+    col |= ((palReadLine(col_pins[i]) == PAL_HIGH) ? 0 : (1<<i));
+  }
+  return col;
+  /*
+  return ((palReadLine(GPIOA, 0)==PAL_HIGH) ? 0 : (1<<0))
+    | ((palReadLine(GPIOA, 1)==PAL_HIGH) ? 0 : (1<<1))
+    | ((palReadLine(GPIOA, 2)==PAL_HIGH) ? 0 : (1<<2))
+    | ((palReadLine(GPIOA, 3)==PAL_HIGH) ? 0 : (1<<3))
+    | ((palReadLine(GPIOA, 4)==PAL_HIGH) ? 0 : (1<<4))
+    | ((palReadLine(GPIOA, 5)==PAL_HIGH) ? 0 : (1<<5))
+    | ((palReadLine(GPIOA, 6)==PAL_HIGH) ? 0 : (1<<6))
+    | ((palReadLine(GPIOA, 7)==PAL_HIGH) ? 0 : (1<<7))
+    | ((palReadLine(GPIOA, 8)==PAL_HIGH) ? 0 : (1<<8))
+    | ((palReadLine(GPIOA, 9)==PAL_HIGH) ? 0 : (1<<9))
+    | ((palReadLine(GPIOA, 10)==PAL_HIGH) ? 0 : (1<<10));
+  */
 }
 
 /* Row pin configuration
  */
 static void unselect_rows(void)
 {
-    // palSetPadMode(GPIOA, GPIOA_PIN10, PAL_MODE_INPUT); // hi-Z
+    // palSetLineMode(GPIOA, GPIOA_PIN10, PAL_MODE_INPUT); // hi-Z
   // unselect high
-  palSetPad(GPIOB, 12);
-  palSetPad(GPIOB, 13);
-  palSetPad(GPIOB, 14);
-  palSetPad(GPIOB, 15);
+  for (uint8_t i = 0; i < MATRIX_ROWS; i++) {
+    palSetLine(row_pins[i]);
+  }
 }
 
 static void select_row(uint8_t row)
 {
-  //(void)row;
-    // Output low to select
-  palClearPad(GPIOB, 12+row);
+  palClearLine(row_pins[row]);
 }

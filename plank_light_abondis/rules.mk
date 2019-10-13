@@ -5,7 +5,7 @@ ifndef QUANTUM_DIR
 endif
 
 BOOTMAGIC_ENABLE = lite     # Virtual DIP switch configuration(+1000)
-MOUSEKEY_ENABLE = yes       # Mouse keys(+4700)
+MOUSEKEY_ENABLE = no       # Mouse keys(+4700)
 EXTRAKEY_ENABLE = yes       # Audio control and System control(+450)
 CONSOLE_ENABLE = no         # Console for debug(+400)
 STENO_ENABLE = yes          # Additional protocols for Stenography(+1700), requires VIRTSER

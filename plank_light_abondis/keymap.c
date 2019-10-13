@@ -20,6 +20,8 @@
 #endif
 #include "keymap_steno.h"
 #include "eeprom.h"
+/* #include "rgblight.h" */
+/* void sethsv(uint8_t hue, uint8_t sat, uint8_t val, LED_TYPE *led1); */
 
 typedef union {
   uint32_t raw;
@@ -165,12 +167,12 @@ KC_BTN1, _______, RESET  , _______, _______, _______, _______ , _______, _______
  * | Exit |      |      |   A  |   O  |             |   E  |   U  |      |      |      |
  * `-----------------------------------------------------------------------------------'
  */
-[_PLOVER] = LAYOUT_planck_grid(
-    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1   ,
-    XXXXXXX, KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC,
-    XXXXXXX, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
-    EXT_PLV, XXXXXXX, XXXXXXX, KC_C,    KC_V,    XXXXXXX, XXXXXXX, KC_N,    KC_M,    XXXXXXX, XXXXXXX, XXXXXXX
-),
+[_PLOVER] = {
+  {STN_N1,  STN_N2,  STN_N3,  STN_N4,  STN_N5,  STN_N6,  STN_N7,  STN_N8,  STN_N9,  STN_NA,  STN_NB,  STN_NC },
+  {STN_FN,  STN_S1,  STN_TL,  STN_PL,  STN_HL,  STN_ST1, STN_ST3, STN_FR,  STN_PR,  STN_LR,  STN_TR,  STN_DR },
+  {XXXXXXX, STN_S2,  STN_KL,  STN_WL,  STN_RL,  STN_ST2, STN_ST4, STN_RR,  STN_BR,  STN_GR,  STN_SR,  STN_ZR },
+  {EXT_PLV, XXXXXXX, XXXXXXX, STN_A,   STN_O,   XXXXXXX, XXXXXXX, STN_E,   STN_U,   STN_PWR, STN_RE1, STN_RE2}
+},
 
 /* Adjust (Lower + Raise)
  *                      v------------------------RGB CONTROL--------------------v
@@ -187,7 +189,7 @@ KC_BTN1, _______, RESET  , _______, _______, _______, _______ , _______, _______
 [_ADJUST] = LAYOUT_planck_grid(
     _______, RESET,   DEBUG,   RGB_TOG, RGB_MOD, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD,  RGB_VAI, RGB_VAD, KC_DEL ,
     _______, _______, MU_MOD,  AU_ON,   AU_OFF,  _______, _______, QWERTY,   PLOVER,  COLEMAK,  _______,  _______,
-    _______, MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,  MI_ON,   MI_OFF,  TERM_ON, TERM_OFF, _______, _______, _______,
+    _______, MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,  MI_ON,   MI_OFF,  TERM_ON, TERM_OFF, KC_BRIU, KC_BRID, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______,  _______, _______, _______
 )
 
@@ -208,23 +210,60 @@ extern rgb_config_t rgb_matrix_config;
 void keyboard_post_init_user(void) {
   rgb_matrix_enable();
 }
+#define RGB_BLK 0x01, 0x01, 0x01
+// Base layer colors
+const uint8_t BASECOL[][3] = {
+[_QWERTY] = {RGB_CYAN},
+[_COLEMAK] = {RGB_ORANGE},
+[_PLOVER] = {RGB_MAGENTA},
+[_ADJUST] = {RGB_GREEN},
+};
 
+// Per layer - per key colors
 const uint8_t PROGMEM ledmap[][DRIVER_LED_TOTAL][3] = {
-    [0] = { {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {85,203,158}, {85,203,158}, {85,203,158}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {32,176,255}, {32,176,255}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {85,203,158}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189} },
+[_QWERTY] = {
+{ RGB_RED   },{          },{          },{          },{          },{          },   {          },{          },{          },{          },{          },{  RGB_RED },
+{ RGB_RED   },{          },{          },{          },{          },{          },   {          },{          },{          },{          },{          },{  RGB_RED },
+{ RGB_RED   },{          },{          },{          },{          },{          },   {          },{          },{          },{          },{          },{  RGB_RED },
+{ RGB_RED   },{  RGB_RED },{  RGB_RED },{  RGB_RED },{  RGB_RED },{          },{},{          },{  RGB_RED },{  RGB_RED },{  RGB_RED },{  RGB_RED },{  RGB_RED },
+},
+[_COLEMAK] = {
+{ RGB_BLUE  },{          },{          },{          },{          },{          },   {          },{          },{          },{          },{          },{  RGB_BLUE },
+{ RGB_BLUE  },{          },{          },{          },{          },{          },   {          },{          },{          },{          },{          },{  RGB_BLUE },
+{ RGB_BLUE  },{          },{          },{          },{          },{          },   {          },{          },{          },{          },{          },{  RGB_BLUE },
+{ RGB_BLUE  },{ RGB_BLUE },{ RGB_BLUE },{ RGB_BLUE },{ RGB_BLUE },{          },{},{          },{ RGB_BLUE },{ RGB_BLUE },{ RGB_BLUE },{ RGB_BLUE },{  RGB_BLUE },
+},
+[_PLOVER] = {
+{ RGB_TEAL },{ RGB_TEAL },{ RGB_TEAL },{ RGB_TEAL },{ RGB_TEAL },{ RGB_TEAL  },    { RGB_TEAL },{ RGB_TEAL },{ RGB_TEAL },{ RGB_TEAL },{ RGB_TEAL },{  RGB_TEAL},
+{ RGB_TEAL },{          },{          },{          },{          },{           },    {          },{          },{          },{          },{          },{  RGB_TEAL},
+{ RGB_BLK  },{          },{          },{          },{          },{           },    {          },{          },{          },{          },{          },{  RGB_TEAL},
+{ RGB_TEAL },{ RGB_BLK  },{ RGB_BLK  },{          },{          },{ RGB_BLK},{RGB_BLK},{RGB_BLK},{          },{          },{ RGB_TEAL },{ RGB_TEAL },{  RGB_TEAL},
+}
+    /* [0] = { */
+    /*   {85,203,158}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189},           {85,203,158}, */
+    /*   {85,203,158}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {85,203,158}, {85,203,158}, {85,203,158}, {0,203,189}, {0,203,189}, {0,203,189},        {85,203,158}, */
+    /*   {85,203,158}, {0,203,189}, {0,203,189}, {32,176,255}, {32,176,255}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189},         {85,203,158}, */
+    /*   {85,203,158}, {85,203,158}, {85,203,158}, {85,203,158}, {85,203,158}, {0,203,189}, {0,203,189}, {85,203,158}, {85,203,158}, {85,203,158}, {85,203,158}, (85,203,158) }, */
 
 };
 
 void set_layer_color(int layer) {
+  int r, g, b;
+  r = BASECOL[layer][0];
+  g = BASECOL[layer][1];
+  b = BASECOL[layer][2];
   for (int i = 0; i < DRIVER_LED_TOTAL; i++) {
-    HSV hsv = {
-      .h = pgm_read_byte(&ledmap[layer][i][0]),
-      .s = pgm_read_byte(&ledmap[layer][i][1]),
-      .v = pgm_read_byte(&ledmap[layer][i][2]),
+    RGB rgb = {
+      .r = pgm_read_byte(&ledmap[layer][i][0]),
+      .g = pgm_read_byte(&ledmap[layer][i][1]),
+      .b = pgm_read_byte(&ledmap[layer][i][2]),
     };
-    if (!hsv.h && !hsv.s && !hsv.v) {
-        rgb_matrix_set_color( i, 0, 0, 0 );
+    if (!rgb.r && !rgb.g && !rgb.b) {
+        rgb_matrix_set_color( i, r, g, b );
     } else {
-        RGB rgb = hsv_to_rgb( hsv );
+    /* if (rgb.r && rgb.g && rgb.b) { */
+    /* if (hsv.h && hsv.s && hsv.v) { */
+        /* RGB rgb = hsv_to_rgb( hsv ); */
         float f = (float)rgb_matrix_config.hsv.v / UINT8_MAX;
         rgb_matrix_set_color( i, f * rgb.r, f * rgb.g, f * rgb.b );
     }
@@ -234,8 +273,14 @@ void set_layer_color(int layer) {
 void rgb_matrix_indicators_user(void) {
   if (g_suspend_state || keyboard_config.disable_layer_led) { return; }
   switch (biton32(layer_state)) {
-    case 0:
-      set_layer_color(0);
+    case _QWERTY:
+      set_layer_color(_QWERTY);
+      break;
+    case _COLEMAK:
+      set_layer_color(_COLEMAK);
+      break;
+    case _PLOVER:
+      set_layer_color(_PLOVER);
       break;
    default:
     if (rgb_matrix_get_flags() == LED_FLAG_NONE)
@@ -429,5 +474,6 @@ bool music_mask_user(uint16_t keycode) {
 }
 
 void matrix_init_user() {
-  steno_set_mode(STENO_MODE_GEMINI); // or STENO_MODE_BOLT
+  /* steno_set_mode(STENO_MODE_GEMINI); // or STENO_MODE_BOLT */
+  steno_set_mode(STENO_MODE_BOLT); // or STENO_MODE_BOLT
 }

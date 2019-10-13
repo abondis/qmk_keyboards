@@ -39,4 +39,14 @@
 #define ENCODER_RESOLUTION 4
 #define IGNORE_MOD_TAP_INTERRUPT
 #define TAPPING_TERM 200
+
+#define RGB_MATRIX_KEYPRESSES // reacts to keypresses
+#define RGB_MATRIX_KEYRELEASES // reacts to keyreleases (instead of keypresses)
+#define RGB_DISABLE_AFTER_TIMEOUT 10 // number of ticks to wait until disabling effects
+#define RGB_DISABLE_WHEN_USB_SUSPENDED true // turn off effects when suspended
+/* #define AUDIO_CLICKY */
+
+// #define DAC_SAMPLE_MAX 65535U
+/* #define DAC_SAMPLE_MAX 16000U */
+
 #endif

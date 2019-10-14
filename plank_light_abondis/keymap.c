@@ -53,8 +53,8 @@ enum planck_keycodes {
   PLOVER,
   BACKLIT,
   EXT_PLV,
-  RGB_SLD, // = SAFE_RANGE,
-  HSV_0_128_145,
+  /* RGB_SLD, // = SAFE_RANGE, */
+  /* HSV_0_128_145, */
 };
 
 #define LOWER MO(_LOWER)
@@ -150,10 +150,10 @@ _______, _______,         _______,   _______,  _______,   _______,  _______,  __
  * `-----------------------------------------------------------------------------------'
  */
 [_RAISE] = LAYOUT_planck_grid(
-_______, KC_F8  , KC_F7  , KC_MS_U, KC_F5  ,  KC_F4,   KC_SLCK, KC_PAUSE, KC_F11 , KC_F10 , KC_F9  , _______,
-_______, KC_F6 , KC_MS_L , KC_MS_D, KC_MS_R,  KC_F3,   KC_VOLD, KC_ACL0 , KC_ACL1, KC_ACL2, KC_VOLU, _______,
-_______, KC_WH_R, KC_WH_U, KC_WH_D, KC_WH_L,  KC_F2,   KC_MUTE, KC_MPRV , KC_MPLY, KC_MNXT, KC_MUTE, _______,
-KC_BTN1, _______, RESET  , _______, _______, _______, _______ , _______, _______, _______, _______, _______
+_______, XXXXXXX  , XXXXXXX , KC_MS_U, XXXXXXX ,  KC_F4  , KC_SLCK , KC_PAUSE, KC_F11  , KC_F10  , KC_F9   , _______,
+_______, XXXXXXX , KC_MS_L  , KC_MS_D, KC_MS_R ,  KC_F3  , KC_VOLD , KC_ACL0 , KC_ACL1 , KC_ACL2 , KC_VOLU , _______,
+_______, KC_F1   , KC_F2    , KC_F3  , KC_F4   ,  KC_F5  , KC_MUTE , KC_MPRV , KC_MPLY , KC_MNXT , KC_MUTE , _______,
+LT(_LOWER, KC_BTN1), _______ ,   RESET  , _______, _______ , _______ , _______ , _______ , _______ , _______ , _______ , _______
 ),
 
 /* Plover layer (http://opensteno.org)
@@ -215,6 +215,8 @@ void keyboard_post_init_user(void) {
 const uint8_t BASECOL[][3] = {
 [_QWERTY] = {RGB_CYAN},
 [_COLEMAK] = {RGB_ORANGE},
+[_RAISE] = {RGB_TURQUOISE},
+[_LOWER] = {RGB_ORANGE},
 [_PLOVER] = {RGB_MAGENTA},
 [_ADJUST] = {RGB_GREEN},
 };
@@ -225,20 +227,56 @@ const uint8_t PROGMEM ledmap[][DRIVER_LED_TOTAL][3] = {
 { RGB_RED   },{          },{          },{          },{          },{          },   {          },{          },{          },{          },{          },{  RGB_RED },
 { RGB_RED   },{          },{          },{          },{          },{          },   {          },{          },{          },{          },{          },{  RGB_RED },
 { RGB_RED   },{          },{          },{          },{          },{          },   {          },{          },{          },{          },{          },{  RGB_RED },
-{ RGB_RED   },{  RGB_RED },{  RGB_RED },{  RGB_RED },{  RGB_RED },{          },{},{          },{  RGB_RED },{  RGB_RED },{  RGB_RED },{  RGB_RED },{  RGB_RED },
+{ RGB_RED   },{  RGB_RED },{  RGB_RED },{  RGB_RED },{  RGB_RED },{     },{RGB_BLK},{        },{  RGB_RED },{  RGB_RED },{  RGB_RED },{  RGB_RED },{  RGB_RED },
+},
+/* [_RAISE] = LAYOUT_planck_grid( */
+/* _______, XXXXXXX  , XXXXXXX , KC_MS_U, XXXXXXX ,  KC_F4  , KC_SLCK , KC_PAUSE, KC_F11  , KC_F10  , KC_F9   , _______, */
+/* _______, XXXXXXX , KC_MS_L  , KC_MS_D, KC_MS_R ,  KC_F3  , KC_VOLD , KC_ACL0 , KC_ACL1 , KC_ACL2 , KC_VOLU , _______, */
+/* _______, KC_F1   , KC_F2    , KC_F3  , KC_F4   ,  KC_F5  , KC_MUTE , KC_MPRV , KC_MPLY , KC_MNXT , KC_MUTE , _______, */
+/* LT(_LOWER, KC_BTN1), _______ ,   RESET  , _______, _______ , _______ , _______ , _______ , _______ , _______ , _______ , _______ */
+/* ), */
+[_RAISE] = {
+{ RGB_RED },{ RGB_BLK  },{ RGB_BLK  },{          },{  RGB_BLK},{ RGB_TEAL  },    {          },{          },{          },{          },{          },{ RGB_RED  },
+{ RGB_RED  },{ RGB_BLK },{          },{          },{         },{ RGB_TEAL  },    {          },{          },{          },{          },{          },{ RGB_RED  },
+{ RGB_RED },{ RGB_TEAL },{ RGB_TEAL },{ RGB_TEAL },{ RGB_TEAL },{ RGB_TEAL  },    {          },{          },{          },{          },{ RGB_RED },{ RGB_RED  },
+{ RGB_RED },{ RGB_RED  },{ RGB_PURPLE },{ RGB_RED },{ RGB_RED },{ RGB_RED },{RGB_BLK},{RGB_RED },{RGB_RED },{  RGB_RED },{ RGB_RED },{ RGB_RED },{  RGB_RED  },
+},
+/* [_LOWER] = LAYOUT_planck_grid( */
+/* _______, KC_INS,          KC_HOME,   KC_UP,    KC_END,    KC_PGUP,  KC_PGUP,  KC_7,      KC_8,      KC_9,       KC_0,            _______, */
+/* _______, SFT_T(KC_DEL),   KC_LEFT,   KC_DOWN,  KC_RIGHT,  KC_PGDN,  KC_PGDN,  KC_4,      KC_5,      KC_6,       SFT_T(KC_EQUAL), _______, */
+/* _______, _______,         _______,   KC_LBRC,  KC_RBRC,   KC_GRAVE, _______,  KC_1,      KC_2,      KC_3,       KC_BSLS,         _______, */
+/* _______, _______,         _______,   _______,  _______,   _______,  _______,  _______,  _______, _______,       KC_DOT,          _______ */
+/*                               ), */
+[_LOWER] = {
+{ RGB_RED },{ RGB_CORAL},{ RGB_BLK  },{          },{  RGB_BLK},{ RGB_BLK  },    { RGB_BLK  },{          },{          },{          },{          },{ RGB_RED  },
+{ RGB_RED },{ RGB_CORAL},{          },{          },{         },{ RGB_BLK  },    { RGB_BLK  },{          },{          },{          },{ RGB_PINK },{ RGB_RED  },
+{ RGB_RED },{ RGB_TEAL },{ RGB_TEAL },{ RGB_PINK },{ RGB_PINK},{RGB_PINK },    { RGB_TEAL },{          },{          },{          },{ RGB_PINK  },{ RGB_RED  },
+{ RGB_RED },{ RGB_RED  },{ RGB_PURPLE },{ RGB_RED },{ RGB_RED },{ RGB_RED },{RGB_BLK},{RGB_RED },{RGB_RED },{  RGB_RED },{ RGB_RED },{ RGB_PINK},{  RGB_RED  },
 },
 [_COLEMAK] = {
 { RGB_BLUE  },{          },{          },{          },{          },{          },   {          },{          },{          },{          },{          },{  RGB_BLUE },
 { RGB_BLUE  },{          },{          },{          },{          },{          },   {          },{          },{          },{          },{          },{  RGB_BLUE },
 { RGB_BLUE  },{          },{          },{          },{          },{          },   {          },{          },{          },{          },{          },{  RGB_BLUE },
-{ RGB_BLUE  },{ RGB_BLUE },{ RGB_BLUE },{ RGB_BLUE },{ RGB_BLUE },{          },{},{          },{ RGB_BLUE },{ RGB_BLUE },{ RGB_BLUE },{ RGB_BLUE },{  RGB_BLUE },
+{ RGB_BLUE  },{ RGB_BLUE },{ RGB_BLUE },{ RGB_BLUE },{ RGB_BLUE },{     },{RGB_BLK},{        },{ RGB_BLUE },{ RGB_BLUE },{ RGB_BLUE },{ RGB_BLUE },{  RGB_BLUE },
 },
 [_PLOVER] = {
 { RGB_TEAL },{          },{          },{          },{          },{ RGB_TEAL  },    { RGB_TEAL },{          },{          },{          },{          },{  RGB_TEAL},
 { RGB_BLK  },{          },{          },{          },{          },{ RGB_TEAL  },    { RGB_TEAL },{          },{          },{          },{          },{  RGB_TEAL},
 { RGB_TEAL },{ RGB_TEAL },{ RGB_TEAL },{ RGB_TEAL },{ RGB_TEAL },{ RGB_TEAL  },    { RGB_TEAL },{ RGB_TEAL },{ RGB_TEAL },{ RGB_TEAL },{ RGB_TEAL },{  RGB_TEAL},
 { RGB_TEAL },{ RGB_BLK  },{ RGB_BLK  },{          },{          },{ RGB_BLK},{RGB_BLK},{RGB_BLK},{          },{          },{ RGB_TEAL },{ RGB_TEAL },{  RGB_TEAL},
-}
+},
+/* [_ADJUST] = LAYOUT_planck_grid( */
+/*     _______, RESET,   DEBUG,   RGB_TOG, RGB_MOD, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD,  RGB_VAI, RGB_VAD, KC_DEL , */
+/*     _______, _______, MU_MOD,  AU_ON,   AU_OFF,  _______, _______, QWERTY,   PLOVER,  COLEMAK,  _______,  _______, */
+/*     _______, MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,  MI_ON,   MI_OFF,  TERM_ON, TERM_OFF, KC_BRIU, KC_BRID, _______, */
+/*     _______, _______, _______, _______, _______, _______, _______, _______, _______,  _______, _______, _______ */
+/* ) */
+[_ADJUST] = {
+{ RGB_BLUE  },{ RGB_RED  },{          },{          },{          },{          },   {          },{          },{            },{          },{          },{  RGB_BLUE },
+{ RGB_BLUE  },{ RGB_BLUE },{          },{          },{ RGB_BLUE },{ RGB_BLUE },   {          },{ RGB_TEAL },{ RGB_MAGENTA},{RGB_ORANGE},{ RGB_BLUE },{  RGB_BLUE },
+{ RGB_BLUE  },{          },{          },{          },{          },{          },   {          },{          },{            },{ 0, 50, 10},{ 0, 50, 10},{  RGB_BLUE },
+{ RGB_BLUE  },{ RGB_BLUE },{ RGB_BLUE },{ RGB_BLUE },{ RGB_BLUE },{     },{RGB_BLK},{        },{ RGB_BLUE },{ RGB_BLUE   },{ RGB_BLUE },{ RGB_BLUE },{  RGB_BLUE },
+},
     /* [0] = { */
     /*   {85,203,158}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189},           {85,203,158}, */
     /*   {85,203,158}, {0,203,189}, {0,203,189}, {0,203,189}, {0,203,189}, {85,203,158}, {85,203,158}, {85,203,158}, {0,203,189}, {0,203,189}, {0,203,189},        {85,203,158}, */
@@ -249,6 +287,8 @@ const uint8_t PROGMEM ledmap[][DRIVER_LED_TOTAL][3] = {
 
 void set_layer_color(int layer) {
   int r, g, b;
+  float f = (float)rgb_matrix_config.hsv.v / UINT8_MAX;
+  f = 0.10;
   r = BASECOL[layer][0];
   g = BASECOL[layer][1];
   b = BASECOL[layer][2];
@@ -259,12 +299,11 @@ void set_layer_color(int layer) {
       .b = pgm_read_byte(&ledmap[layer][i][2]),
     };
     if (!rgb.r && !rgb.g && !rgb.b) {
-        rgb_matrix_set_color( i, r, g, b );
+        rgb_matrix_set_color( i, f * r, f * g, f * b );
     } else {
     /* if (rgb.r && rgb.g && rgb.b) { */
     /* if (hsv.h && hsv.s && hsv.v) { */
         /* RGB rgb = hsv_to_rgb( hsv ); */
-        float f = (float)rgb_matrix_config.hsv.v / UINT8_MAX;
         rgb_matrix_set_color( i, f * rgb.r, f * rgb.g, f * rgb.b );
     }
   }
@@ -272,7 +311,8 @@ void set_layer_color(int layer) {
 
 void rgb_matrix_indicators_user(void) {
   if (g_suspend_state || keyboard_config.disable_layer_led) { return; }
-  switch (biton32(layer_state)) {
+  set_layer_color(biton32(layer_state)) ;
+  /*  switch (biton32(layer_state)) {
     case _QWERTY:
       set_layer_color(_QWERTY);
       break;
@@ -286,7 +326,7 @@ void rgb_matrix_indicators_user(void) {
     if (rgb_matrix_get_flags() == LED_FLAG_NONE)
       rgb_matrix_set_color_all(0, 0, 0);
     break;
-  }
+  }*/
 }
 
 
@@ -294,7 +334,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case QWERTY:
       if (record->event.pressed) {
-        print("mode just switched to qwerty and this is a huge string\n");
         set_single_persistent_default_layer(_QWERTY);
       }
       return false;
@@ -308,23 +347,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case DVORAK:
       if (record->event.pressed) {
         set_single_persistent_default_layer(_DVORAK);
-      }
-      return false;
-      break;
-    case BACKLIT:
-      if (record->event.pressed) {
-        register_code(KC_RSFT);
-        #ifdef BACKLIGHT_ENABLE
-          backlight_step();
-        #endif
-        #ifdef KEYBOARD_planck_rev5
-          PORTE &= ~(1<<6);
-        #endif
-      } else {
-        unregister_code(KC_RSFT);
-        #ifdef KEYBOARD_planck_rev5
-          PORTE |= (1<<6);
-        #endif
       }
       return false;
       break;
@@ -356,19 +378,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
       break;
-    case RGB_SLD:
-      if (record->event.pressed) {
-        rgblight_mode(1);
-      }
-      return false;
-      break;
-    case HSV_0_128_145:
-      if (record->event.pressed) {
-        rgblight_mode(1);
-        rgblight_sethsv(0,128,145);
-      }
-      return false;
-      break;
+    /* case RGB_SLD: */
+    /*   if (record->event.pressed) { */
+    /*     rgblight_mode(1); */
+    /*   } */
+    /*   return false; */
+    /*   break; */
+    /* case HSV_0_128_145: */
+    /*   if (record->event.pressed) { */
+    /*     rgblight_mode(1); */
+    /*     rgblight_sethsv(0,128,145); */
+    /*   } */
+    /*   return false; */
+    /*   break; */
   }
   return true;
 }
@@ -473,7 +495,7 @@ bool music_mask_user(uint16_t keycode) {
   }
 }
 
-void matrix_init_user() {
-  /* steno_set_mode(STENO_MODE_GEMINI); // or STENO_MODE_BOLT */
-  steno_set_mode(STENO_MODE_BOLT); // or STENO_MODE_BOLT
-}
+/* void matrix_init_user() { */
+/*   /\* steno_set_mode(STENO_MODE_GEMINI); // or STENO_MODE_BOLT *\/ */
+/*   steno_set_mode(STENO_MODE_BOLT); // or STENO_MODE_BOLT */
+/* } */

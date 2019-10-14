@@ -44,6 +44,9 @@
 #define RGB_MATRIX_KEYRELEASES // reacts to keyreleases (instead of keypresses)
 #define RGB_DISABLE_AFTER_TIMEOUT 10 // number of ticks to wait until disabling effects
 #define RGB_DISABLE_WHEN_USB_SUSPENDED true // turn off effects when suspended
+
+
+#undef RGBLIGTH_ANIMATIONS
 /* #define AUDIO_CLICKY */
 
 // #define DAC_SAMPLE_MAX 65535U

@@ -12,4 +12,4 @@
 #include "dicts/aset/cmd-keymap.def"
 #include "dicts/aset/num-keymap.def"
 #include "dicts/aset/layer-keymap.def"
-#include "user.def"
+//#include "user.def"

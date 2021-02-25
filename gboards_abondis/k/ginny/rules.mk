@@ -13,16 +13,19 @@ DEBOUNCE_TYPE       =   eager_pr
 # Lets try and save some space eh?
 MOUSEKEY_ENABLE     =   no
 EXTRAKEY_ENABLE     =   no
-CONSOLE_ENABLE      =   yes
+# CONSOLE_ENABLE      =   yes
+CONSOLE_ENABLE      =   no
 COMMAND_ENABLE      =   no
 
-VPATH               +=  keyboards/abondis/ 
+VPATH               +=  keyboards/gboards_abondis/ 
 # SRC                 +=  matrix.c g/engine.c config_engine.c
 SRC                 +=  g/engine.c config_engine.c
 # QUANTUM_LIB_SRC     +=  i2c_master.c
 OPT_DEFS            +=  -DONLYQWERTY 
 LTO_ENABLE          =   yes
-# BOOTLOADER          =   catarina
+BOOTLOADER          =   catarina
+COMBO_ENABLE        = yes
+# BOOTLOADER          =   avrdude
 
 PS2_MOUSE_ENABLE = yes
 PS2_USE_INT = yes
